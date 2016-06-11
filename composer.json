@@ -6,7 +6,6 @@
         "google/apiclient": "^2.0",
         "eventviva/php-image-resize": "^1.5",
         "aws/aws-sdk-php": "*",
-        "php-amqplib/php-amqplib":"*",
         "chh/optparse": "*@dev"
     },
     "autoload": {

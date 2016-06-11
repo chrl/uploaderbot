@@ -17,6 +17,12 @@ return array(
                 ),
             )
         ),
+        'resize' => array(
+            'desc'=>'Resize next images from the queue',
+            'getImagesFromQueue'=>array(
+                
+            )
+        ),
         'default'=>array(
             'desc'=>'Show help and exit',
             'outputHelp'=>array(
