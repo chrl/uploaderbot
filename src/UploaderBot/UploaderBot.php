@@ -2,14 +2,12 @@
 
 namespace UploaderBot;
 
-use Aws\Test\PartitionEndpointProviderTest;
 use CHH\Optparse;
-use Eventviva\ImageResize;
 
 class UploaderBot extends UploaderBotService {
 
 
-    public function listImages()
+    public function listImagesInFolder()
     {
         $folder = $this->commando[1];
 
@@ -180,6 +178,38 @@ class UploaderBot extends UploaderBotService {
         }
 
         return array('ok',array('images'=>$images,'queue'=>'upload'));
+
+    }
+
+    public function uploadImages()
+    {
+        $images = array();
+
+        if (!isset($this->registry['failed'])) {
+            $this->registry['failed'] = array();
+        }
+
+        foreach($this->registry['images'] as $image)
+        {
+
+            $this->log('Uploading image: '.$image['file']);
+
+            $s3 = new \S3(
+                $this->config['access']['aws']['key'],
+                $this->config['access']['aws']['secret']
+            );
+
+            $res = $s3->putObjectFile($image['file'], $this->config['access']['aws']['bucket'], basename($image['file']),\S3::ACL_PUBLIC_READ);
+
+            if ($res) {
+                array_push($images, 'images_resized/' . basename($image['file']));
+            } else {
+                array_push($this->registry['failed'], 'images_resized/' . basename($image['file']));
+            }
+
+        }
+
+        return array('ok',array('images'=>$images,'queue'=>'done'));
 
     }
 

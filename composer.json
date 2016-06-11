@@ -3,10 +3,8 @@
     "description": "Bot to resize and upload images",
     "minimum-stability": "dev",
     "require": {
-        "google/apiclient": "^2.0",
-        "eventviva/php-image-resize": "^1.5",
-        "aws/aws-sdk-php": "*",
-        "chh/optparse": "*@dev"
+        "chh/optparse": "*@dev",
+        "tpyo/amazon-s3-php-class": "*"
     },
     "autoload": {
         "psr-0": {

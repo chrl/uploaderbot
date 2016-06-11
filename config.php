@@ -5,7 +5,7 @@ return array(
     'strategy' => array(
         'schedule'=> array(
             'desc'=>'Add filenames to resize queue',
-            'listImages'=>array(
+            'listImagesInFolder'=>array(
                 'ok' => array(
                     'addImagesToQueue'=>array(
                         'ok'=>array(
@@ -26,7 +26,25 @@ return array(
                             'addImagesToQueue'=>array(
                                 'ok'=>array(
                                     'addFailedImagesToQueue'=>array(
-                                        
+
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        ),
+        'upload' => array(
+            'desc'=>'Upload images to amazon webservice',
+            'getImagesFromQueue'=>array(
+                'ok'=>array(
+                    'uploadImages'=>array(
+                        'ok'=>array(
+                            'addImagesToQueue'=>array(
+                                'ok'=>array(
+                                    'addFailedImagesToQueue'=>array(
+
                                     )
                                 )
                             )
@@ -50,11 +68,11 @@ return array(
 
     ),
     'access'=>array(
-        'storage'=>array(
-            'aws'=> array(
-                'key'=>'123',
-                'secret'=>'123',
-            )
+
+        'aws'=> array(
+            'bucket'=>'botuploads',
+            'key'=>'AKIAJRMJFCA2JWKKEZ5Q',
+            'secret'=>'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',
         ),
         'rabbit'=>array(
             'host'=>'localhost',
