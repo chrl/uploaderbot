@@ -9,6 +9,7 @@ class Queue
     private $channel;
     private $exchanges;
     private $queues;
+    private $cur_envelope;
 
     private function __construct($name)
     {
@@ -68,8 +69,14 @@ class Queue
             $this->exchanges[$name]->setName($name);
             $this->exchanges[$name]->setType($type);
             $this->exchanges[$name]->setFlags(AMQP_DURABLE);
-            if($declare)
-                $this->exchanges[$name]->declareExchange();
+            if($declare) {
+
+                try {
+                    $this->exchanges[$name]->declareExchange();
+                } catch (AMQPExchangeException $e) {
+
+                }
+            }
         }
     }
 
@@ -113,7 +120,7 @@ class Queue
 
             if($item)
             {
-
+                $this->cur_envelope = $item;
                 return $item->getBody();
             }
         }

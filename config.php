@@ -7,9 +7,9 @@ return array(
             'desc'=>'Add filenames to resize queue',
             'listImages'=>array(
                 'ok' => array(
-                    'addImagesToResizeQueue'=>array(
+                    'addImagesToQueue'=>array(
                         'ok'=>array(
-                            'MoveFailedImages'=>array(
+                            'addFailedImagesToQueue'=>array(
 
                             )
                         )
@@ -20,7 +20,19 @@ return array(
         'resize' => array(
             'desc'=>'Resize next images from the queue',
             'getImagesFromQueue'=>array(
-                
+                'ok'=>array(
+                    'resizeImages'=>array(
+                        'ok'=>array(
+                            'addImagesToQueue'=>array(
+                                'ok'=>array(
+                                    'addFailedImagesToQueue'=>array(
+                                        
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
             )
         ),
         'default'=>array(

@@ -91,8 +91,10 @@ class UploaderBotService {
             $result = $this->{$action}();
             $this->runningAction = false;
 
-            foreach($result[1] as $k=>$v) {
-                $this->registry[$k]=$v;
+            if ($result[1]) {
+                foreach ($result[1] as $k => $v) {
+                    $this->registry[$k] = $v;
+                }
             }
 
             if (isset($follows[$result[0]])) {
