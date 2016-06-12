@@ -6,7 +6,7 @@ use CHH\Optparse;
 
 class UploaderBotService {
 
-    public $debug = true;
+    public $debug = false;
     protected $commando;
     protected $count = 0;
     protected $config = array();
@@ -40,6 +40,7 @@ class UploaderBotService {
         $this->commando = new Optparse\Parser("Uploader Bot\nList of available commands:");
 
         $this->commando->addFlag("help", array("alias" => "-h"), array($this,"usage"));
+        $this->commando->addFlag("verbose");
         $this->commando->addFlag("number",array("alias"=> "-n", "default"=>0, "has_value"=>true, "help"=>"Set number of processed items"));
         $this->commando->addArgument("command", array("required" => true,"help"=>"Strategy to run"));
 
@@ -52,6 +53,10 @@ class UploaderBotService {
         // 2. Define strategy
 
         $strategy = $this->commando['command'];
+
+        if ($this->commando['verbose']) {
+            $this->debug = true;
+        }
 
         if (isset($this->config['strategy'][$strategy])) {
             $this->log("Running strategy: " . $strategy);
