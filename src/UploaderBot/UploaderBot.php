@@ -254,6 +254,7 @@ class UploaderBot extends UploaderBotService
 
             if ($res) {
                 array_push($images, 'images_resized/' . basename($image['file']));
+                unlink('images_resized/' . basename($image['file']));
             } else {
                 array_push($this->registry['failed'], 'images_resized/' . basename($image['file']));
             }
