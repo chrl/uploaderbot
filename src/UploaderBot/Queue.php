@@ -2,6 +2,8 @@
 
 namespace UploaderBot;
 
+use AMQPConnection;
+
 class Queue
 {
     private static $settings;
@@ -11,9 +13,10 @@ class Queue
     private $queues;
     private $cur_envelope;
 
+
     private function __construct($name)
     {
-        $this->cnn = new \AMQPConnection();
+        $this->cnn = new AMQPConnection();
         $this->cnn->setHost(self::$settings[$name]['host']);
         $this->cnn->setPort(self::$settings[$name]['port']);
 
