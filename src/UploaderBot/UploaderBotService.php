@@ -39,6 +39,8 @@ class UploaderBotService
         echo "Registered classes: ".PHP_EOL;
         var_dump(get_declared_classes());
 
+        phpinfo();
+        
         die;
     }
 
