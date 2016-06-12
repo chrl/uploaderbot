@@ -9,7 +9,6 @@ before_install:
   - printf "\n" | pecl install amqp
 before_script:
   - composer install
-  - echo "extension = amqp.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - php -m
 script:
   - ./bot.php
