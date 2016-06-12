@@ -35,6 +35,10 @@ class UploaderBotService
         foreach ($this->config['strategy'] as $name=>$strategy) {
             echo "  ".str_pad($name, 10, ' ', STR_PAD_RIGHT).$strategy['desc'].PHP_EOL;
         }
+
+        echo "Registered classes: ".PHP_EOL;
+        var_dump(get_declared_classes());
+
         die;
     }
 
