@@ -12,7 +12,8 @@ use CHH\Optparse;
  * @todo due to testing purposes of the script.
  * @package UploaderBot
  */
-class UploaderBotService {
+class UploaderBotService
+{
 
     public $debug = false;
     protected $commando;
@@ -28,10 +29,11 @@ class UploaderBotService {
      * Output usage information and exit
      *
      */
-    public function usage() {
+    public function usage()
+    {
         echo $this->commando->usage().PHP_EOL;
-        foreach($this->config['strategy'] as $name=>$strategy) {
-            echo "  ".str_pad($name,10,' ',STR_PAD_RIGHT).$strategy['desc'].PHP_EOL;
+        foreach ($this->config['strategy'] as $name=>$strategy) {
+            echo "  ".str_pad($name, 10, ' ', STR_PAD_RIGHT).$strategy['desc'].PHP_EOL;
         }
         die;
     }
@@ -41,7 +43,8 @@ class UploaderBotService {
      *
      * @return $this -- chainable
      */
-    public function loadConfig() {
+    public function loadConfig()
+    {
         $this->config = require("config.php");
         return $this;
     }
@@ -51,7 +54,8 @@ class UploaderBotService {
      *
      * @return $this -- chainable
      */
-    public function init() {
+    public function init()
+    {
 
         // 0. Initialize Rabbit
 
@@ -61,10 +65,10 @@ class UploaderBotService {
 
         $this->commando = new Optparse\Parser("Uploader Bot\nList of available commands:");
 
-        $this->commando->addFlag("help", array("alias" => "-h"), array($this,"usage"));
+        $this->commando->addFlag("help", array("alias" => "-h"), array($this, "usage"));
         $this->commando->addFlag("verbose");
-        $this->commando->addFlag("number",array("alias"=> "-n", "default"=>0, "has_value"=>true, "help"=>"Set number of processed items"));
-        $this->commando->addArgument("command", array("required" => true,"help"=>"Strategy to run"));
+        $this->commando->addFlag("number", array("alias"=> "-n", "default"=>0, "has_value"=>true, "help"=>"Set number of processed items"));
+        $this->commando->addArgument("command", array("required" => true, "help"=>"Strategy to run"));
 
         try {
             $this->commando->parse();
@@ -89,7 +93,6 @@ class UploaderBotService {
 
             unset($this->config['strategy'][$strategy]['desc']);
             $this->setStrategy($this->config['strategy'][$strategy]);
-
         } else {
             echo 'Unrecognized strategy: '.$strategy.PHP_EOL;
             $this->usage();
@@ -107,7 +110,7 @@ class UploaderBotService {
     public function run()
     {
         $initialAction = array_keys($this->strategy)[0];
-        $this->runAction($initialAction,$this->strategy[$initialAction]);
+        $this->runAction($initialAction, $this->strategy[$initialAction]);
 
         return $this;
     }
@@ -119,13 +122,12 @@ class UploaderBotService {
      * @param $follows
      * @return $this  -- chainable
      */
-    public function runAction($action,$follows) {
-
+    public function runAction($action, $follows)
+    {
         $this->log('Running action: '.$action);
         $this->strategy = $follows;
 
         if (method_exists($this, $action)) {
-
             $this->runningAction = $action;
             $result = $this->{$action}();
             $this->runningAction = false;
@@ -138,9 +140,8 @@ class UploaderBotService {
 
             if (isset($follows[$result[0]])) {
                 $action = array_keys($follows[$result[0]])[0];
-                $this->runAction($action,$follows[$result[0]][$action]);
+                $this->runAction($action, $follows[$result[0]][$action]);
             }
-
         }
         return $this;
     }
@@ -151,7 +152,9 @@ class UploaderBotService {
      */
     public function log($message)
     {
-        if ($this->debug) echo '['.date('Y-m-d H:i:s').'] '.($this->runningAction?'['.$this->runningAction.'] ':'').$message.PHP_EOL;
+        if ($this->debug) {
+            echo '['.date('Y-m-d H:i:s').'] '.($this->runningAction?'['.$this->runningAction.'] ':'').$message.PHP_EOL;
+        }
     }
 
 

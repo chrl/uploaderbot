@@ -17,8 +17,7 @@ class Queue
         $this->cnn->setHost(self::$settings[$name]['host']);
         $this->cnn->setPort(self::$settings[$name]['port']);
 
-        if(self::$settings[$name]['user'])
-        {
+        if (self::$settings[$name]['user']) {
             $this->cnn->setLogin(self::$settings[$name]['user']);
             $this->cnn->setPassword(self::$settings[$name]['pwd']);
         }
@@ -26,7 +25,7 @@ class Queue
         $this->connect();
     }
 
-    function __destruct()
+    public function __destruct()
     {
         $this->cnn->disconnect();
     }
@@ -40,12 +39,13 @@ class Queue
      * @param string $name
      * @return Queue
      */
-    public static function  getInstance($name = 'main')
+    public static function getInstance($name = 'main')
     {
         static $instances;
 
-        if(!isset($instances[$name]))
+        if (!isset($instances[$name])) {
             $instances[$name] = new self($name);
+        }
 
         return $instances[$name];
     }
@@ -54,8 +54,7 @@ class Queue
     {
         $this->cnn->connect();
 
-        if($this->cnn->isConnected())
-        {
+        if ($this->cnn->isConnected()) {
             $this->channel = new \AMQPChannel($this->cnn);
             $this->channel->setPrefetchCount(1);
         }
@@ -63,18 +62,15 @@ class Queue
 
     public function createExchange($name, $type, $declare=true)
     {
-        if(!isset($this->exchanges[$name]) && $this->channel->isConnected())
-        {
+        if (!isset($this->exchanges[$name]) && $this->channel->isConnected()) {
             $this->exchanges[$name] = new \AMQPExchange($this->channel);
             $this->exchanges[$name]->setName($name);
             $this->exchanges[$name]->setType($type);
             $this->exchanges[$name]->setFlags(AMQP_DURABLE);
-            if($declare) {
-
+            if ($declare) {
                 try {
                     $this->exchanges[$name]->declareExchange();
-                } catch (AMQPExchangeException $e) {
-
+                } catch (\AMQPExchangeException $e) {
                 }
             }
         }
@@ -83,13 +79,13 @@ class Queue
     public function createQueue($ex_name, $name, $routing_key, $declare=true)
     {
         $cnt = 0;
-        if(!isset($this->queues[$name]) && $this->channel->isConnected())
-        {
+        if (!isset($this->queues[$name]) && $this->channel->isConnected()) {
             $this->queues[$name] = new \AMQPQueue($this->channel);
             $this->queues[$name]->setName($name);
             $this->queues[$name]->setFlags(AMQP_DURABLE);
-            if($declare)
+            if ($declare) {
                 $cnt = $this->queues[$name]->declareQueue();
+            }
             $this->queues[$name]->bind($ex_name, $routing_key);
         } else {
             $cnt = 1;
@@ -114,12 +110,10 @@ class Queue
 
     public function getFromQueue($name, $flags=AMQP_NOPARAM)
     {
-        if($this->queues[$name])
-        {
+        if ($this->queues[$name]) {
             $item = $this->queues[$name]->get($flags);
 
-            if($item)
-            {
+            if ($item) {
                 $this->cur_envelope = $item;
                 return $item->getBody();
             }
@@ -128,14 +122,16 @@ class Queue
 
     public function confirm($name)
     {
-        if($this->queues[$name] && $this->cur_envelope)
+        if ($this->queues[$name] && $this->cur_envelope) {
             return $this->queues[$name]->ack($this->cur_envelope->getDeliveryTag());
+        }
     }
 
 
-    static $counts;
+    public static $counts;
 
-    public static function getCount($ex) {
+    public static function getCount($ex)
+    {
         return self::$counts[$ex];
     }
 
@@ -144,8 +140,7 @@ class Queue
     {
         static $queues;
 
-        if(!isset($queues[$exchange]))
-        {
+        if (!isset($queues[$exchange])) {
             $queues[$exchange]= Queue::getInstance();
             $queues[$exchange]->createExchange('ex_' . $exchange, AMQP_EX_TYPE_DIRECT);
             self::$counts[$exchange] =
@@ -155,8 +150,8 @@ class Queue
         return $queues[$exchange];
     }
 
-    public static function getSizes(array $queueList) {
-
+    public static function getSizes(array $queueList)
+    {
         foreach ($queueList as $queue) {
             self::initQueue($queue);
         }
@@ -179,8 +174,9 @@ class Queue
 
         $item = $queue->getFromQueue($ex); #AMQP_AUTOACK
 
-        if($item)
+        if ($item) {
             return json_decode($item, true);
+        }
     }
 
     public static function ack($ex)
@@ -188,5 +184,4 @@ class Queue
         $queue = self::initQueue($ex);
         return $queue->confirm($ex);
     }
-
 };
