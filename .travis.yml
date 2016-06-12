@@ -6,7 +6,7 @@ php:
   - '5.5'
   - '7.0'
 install:
-  - printf "\n" | sudo pecl install -f amqp
+  - printf "\n" | pecl install -f amqp
   - composer self-update
 before_script:
   - composer install
