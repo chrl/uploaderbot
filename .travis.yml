@@ -7,3 +7,6 @@ services:
   - rabbitmq
 before_script:
   - composer install
+script:
+  - ./bot.php info
+  - ./bot.php status
