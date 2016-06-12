@@ -9,7 +9,8 @@ use CHH\Optparse;
  *
  * @package UploaderBot
  */
-class UploaderBot extends UploaderBotService {
+class UploaderBot extends UploaderBotService
+{
 
 
     /**
@@ -31,14 +32,14 @@ class UploaderBot extends UploaderBotService {
 
         $images = array();
 
-        if (substr($folder, -1)!='/') $folder.='/';
+        if (substr($folder, -1)!='/') {
+            $folder.='/';
+        }
 
         foreach (glob($folder . '*') as $filename) {
-
             if (false !== @imagecreatefromstring(file_get_contents($filename))) {
                 array_push($images, $filename);
             }
-
         }
 
         return array('ok',array('images'=>$images,'queue'=>'resize'));
@@ -50,18 +51,17 @@ class UploaderBot extends UploaderBotService {
      *
      * @return array
      */
-    public function addImagesToQueue() {
-
+    public function addImagesToQueue()
+    {
         if (isset($this->strategy['queue'])) {
             $queue = $this->strategy['queue'];
         } else {
             $queue = $this->registry['queue'];
         }
 
-        $this->log('Got images: '.var_export($this->registry['images'],true));
+        $this->log('Got images: '.var_export($this->registry['images'], true));
 
-        foreach($this->registry['images'] as $image) {
-
+        foreach ($this->registry['images'] as $image) {
             $messageBody = is_array($image)
                                 ? $image
                                 : array(
@@ -70,7 +70,6 @@ class UploaderBot extends UploaderBotService {
                                 );
 
             Queue::pushToQueue($queue, $messageBody);
-
         }
 
         return array('ok',array());
@@ -83,20 +82,21 @@ class UploaderBot extends UploaderBotService {
      * @todo use addImagesToQueue to process failed images
      * @return array
      */
-    public function addFailedImagesToQueue() {
+    public function addFailedImagesToQueue()
+    {
+        if (!isset($this->registry['failed'])) {
+            $this->registry['failed'] = array();
+        }
 
-        if (!isset($this->registry['failed'])) $this->registry['failed'] = array();
+        $this->log('Got failed images: '.var_export($this->registry['failed'], true));
 
-        $this->log('Got failed images: '.var_export($this->registry['failed'],true));
-
-        foreach($this->registry['failed'] as $image) {
+        foreach ($this->registry['failed'] as $image) {
             $messageBody = array(
                 'file'=>$image,
                 'added'=>time(),
             );
 
             Queue::pushToQueue('failed', $messageBody);
-
         }
 
         return array('ok',array());
@@ -109,7 +109,6 @@ class UploaderBot extends UploaderBotService {
      */
     public function listQueues()
     {
-
         $sizes = Queue::getSizes(array(
             'resize',
             'upload',
@@ -121,7 +120,7 @@ class UploaderBot extends UploaderBotService {
         echo 'Queue      Count'.PHP_EOL;
 
         foreach ($sizes as $key=>$value) {
-            echo str_pad($key,10,' ',STR_PAD_RIGHT).' '.$value.PHP_EOL;
+            echo str_pad($key, 10, ' ', STR_PAD_RIGHT).' '.$value.PHP_EOL;
         }
 
 
@@ -146,7 +145,7 @@ class UploaderBot extends UploaderBotService {
         $this->log('Got queue: '.$queue);
 
         $images = array();
-        while(true) {
+        while (true) {
             $image = Queue::getItemFromQueue($queue);
             $total++;
 
@@ -156,9 +155,11 @@ class UploaderBot extends UploaderBotService {
                 Queue::ack($queue);
             }
 
-            array_push($images,$image);
+            array_push($images, $image);
 
-            if ($this->count && ($total >= $this->count)) return array('ok',array('images'=>$images));
+            if ($this->count && ($total >= $this->count)) {
+                return array('ok',array('images'=>$images));
+            }
         }
 
         return array('ok',array('images'=>$images));
@@ -171,28 +172,29 @@ class UploaderBot extends UploaderBotService {
      */
     public function resizeImages()
     {
-
-        if (!file_exists('images_resized')) mkdir('images_resized');
+        if (!file_exists('images_resized')) {
+            mkdir('images_resized');
+        }
 
         $images = array();
         
-        foreach($this->registry['images'] as $image)
-        {
-
+        foreach ($this->registry['images'] as $image) {
             $this->log('Resizing image: '.$image['file']);
 
             $im1 = @imagecreatefromstring(@file_get_contents($image['file']));
 
             if (!$im1) {
-                if (!isset($this->registry['failed'])) $this->registry['failed'] = array();
+                if (!isset($this->registry['failed'])) {
+                    $this->registry['failed'] = array();
+                }
                 array_push($this->registry['failed'], $image['file']);
                 $this->log('Failed image: '.$image['file']);
                 continue;
             }
 
-            list($width,$height) = getimagesize($image['file']);
+            list($width, $height) = getimagesize($image['file']);
 
-            if($width>$height) {
+            if ($width>$height) {
                 $dx =0;
                 $dw = 640;
                 $dh = round($height * ($dw/$width));
@@ -205,7 +207,7 @@ class UploaderBot extends UploaderBotService {
             }
 
             $im2 = imagecreatetruecolor(640, 640);
-            imagefill($im2,0 , 0 , imagecolorallocate($im2,255 ,255 ,255 ));
+            imagefill($im2, 0, 0, imagecolorallocate($im2, 255, 255, 255));
 
             imagecopyresampled(
                 $im2,
@@ -220,13 +222,11 @@ class UploaderBot extends UploaderBotService {
                 $height
             );
 
-            imagejpeg($im2,'images_resized/'.basename($image['file']),90);
+            imagejpeg($im2, 'images_resized/'.basename($image['file']), 90);
             array_push($images, 'images_resized/'.basename($image['file']));
-
         }
 
         return array('ok',array('images'=>$images,'queue'=>'upload'));
-
     }
 
     /**
@@ -242,9 +242,7 @@ class UploaderBot extends UploaderBotService {
             $this->registry['failed'] = array();
         }
 
-        foreach($this->registry['images'] as $image)
-        {
-
+        foreach ($this->registry['images'] as $image) {
             $this->log('Uploading image: '.$image['file']);
 
             $s3 = new \S3(
@@ -252,18 +250,15 @@ class UploaderBot extends UploaderBotService {
                 $this->config['access']['aws']['secret']
             );
 
-            $res = $s3->putObjectFile($image['file'], $this->config['access']['aws']['bucket'], basename($image['file']),\S3::ACL_PUBLIC_READ);
+            $res = $s3->putObjectFile($image['file'], $this->config['access']['aws']['bucket'], basename($image['file']), \S3::ACL_PUBLIC_READ);
 
             if ($res) {
                 array_push($images, 'images_resized/' . basename($image['file']));
             } else {
                 array_push($this->registry['failed'], 'images_resized/' . basename($image['file']));
             }
-
         }
 
         return array('ok',array('images'=>$images,'queue'=>'done'));
-
     }
-
 }
