@@ -2,7 +2,7 @@
 
 namespace UploaderBot;
 
-use AMQPConnection;
+use \AMQPConnection;
 
 class Queue
 {
