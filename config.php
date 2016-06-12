@@ -77,8 +77,8 @@ return array(
 
         'aws'=> array(
             'bucket'=>'botuploads',
-            'key'=>'AKIAIUVDHFV34JWS33CA',
-            'secret'=>'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',
+            'key'=>'AKIAJ4QYZUUNWYYGRVTQ',
+            'secret'=>'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',
         ),
         'rabbit'=>array(
             'host'=>'localhost',
