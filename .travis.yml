@@ -10,7 +10,7 @@ install:
   - composer self-update
 before_script:
   - composer install
-  - php -m
+  - php -i
 script:
   - ./bot.php
   - ./bot.php status
