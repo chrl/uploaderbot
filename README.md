@@ -1,4 +1,4 @@
-# Uploader Bot
+# Uploader Bot [![Build Status](https://travis-ci.org/chrl/uploaderbot.svg?branch=testing)](https://travis-ci.org/chrl/uploaderbot)
 
 This software resizes and uploads images to AWS.
 
