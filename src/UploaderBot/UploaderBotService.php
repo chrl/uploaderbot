@@ -84,6 +84,7 @@ class UploaderBotService {
     public function runAction($action,$follows) {
 
         $this->log('Running action: '.$action);
+        $this->strategy = $follows;
 
         if (method_exists($this, $action)) {
 

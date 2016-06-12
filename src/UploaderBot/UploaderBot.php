@@ -35,15 +35,24 @@ class UploaderBot extends UploaderBotService {
 
     public function addImagesToQueue() {
 
+        if (isset($this->strategy['queue'])) {
+            $queue = $this->strategy['queue'];
+        } else {
+            $queue = $this->registry['queue'];
+        }
+
         $this->log('Got images: '.var_export($this->registry['images'],true));
 
         foreach($this->registry['images'] as $image) {
-            $messageBody = array(
-                'file'=>$image,
-                'added'=>time(),
-            );
 
-            Queue::pushToQueue($this->registry['queue'], $messageBody);
+            $messageBody = is_array($image)
+                                ? $image
+                                : array(
+                                    'file'=>$image,
+                                    'added'=>time(),
+                                );
+
+            Queue::pushToQueue($queue, $messageBody);
 
         }
 
@@ -98,17 +107,23 @@ class UploaderBot extends UploaderBotService {
     {
         $total = 0;
 
+        if (isset($this->strategy['queue'])) {
+            $queue = $this->strategy['queue'];
+        } else {
+            $queue = $this->commando['command'];
+        }
+
+        $this->log('Got queue: '.$queue);
+
         $images = array();
         while(true) {
-            $image = Queue::getItemFromQueue($this->commando['command']);
-
-
+            $image = Queue::getItemFromQueue($queue);
             $total++;
 
             if (!$image) {
                 return array('ok', array('images' => $images));
             } else {
-                Queue::ack($this->commando['command']);
+                Queue::ack($queue);
             }
 
             array_push($images,$image);
@@ -121,8 +136,6 @@ class UploaderBot extends UploaderBotService {
 
     public function resizeImages()
     {
-
-        // TODO: add failed images to fail queue
 
         if (!file_exists('images_resized')) mkdir('images_resized');
 

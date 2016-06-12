@@ -53,9 +53,15 @@ return array(
                 )
             )
         ),
-        'default'=>array(
-            'desc'=>'Show help and exit',
-            'outputHelp'=>array(
+        'retry'=>array(
+            'desc'=>'Requeue failed images to resize queue',
+            'getImagesFromQueue'=>array(
+                'queue'=>'failed',
+                'ok' => array(
+                    'addImagesToQueue'=>array(
+                        'queue'=>'resize',
+                    )
+                )
 
             )
         ),
@@ -64,7 +70,7 @@ return array(
             'listQueues'=>array(
 
             )
-        )
+        ),
 
     ),
     'access'=>array(
