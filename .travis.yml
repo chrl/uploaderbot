@@ -12,5 +12,5 @@ before_script:
   - composer install
   - php -i
 script:
-  - ./bot.php
-  - ./bot.php status
+  - php ./bot.php
+  - php ./bot.php status
