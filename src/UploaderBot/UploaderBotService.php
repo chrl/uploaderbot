@@ -4,6 +4,14 @@ namespace UploaderBot;
 
 use CHH\Optparse;
 
+/**
+ * Class UploaderBotService  -- performs all service tasks for operation of UploaderBot.
+ * Includes strategy running, logging, etc
+ *
+ * @todo Check file for fails: not all errors are checked (i.e. it will fail if no config found),
+ * @todo due to testing purposes of the script.
+ * @package UploaderBot
+ */
 class UploaderBotService {
 
     public $debug = false;
@@ -16,6 +24,10 @@ class UploaderBotService {
 
     protected $registry = array();
 
+    /**
+     * Output usage information and exit
+     *
+     */
     public function usage() {
         echo $this->commando->usage().PHP_EOL;
         foreach($this->config['strategy'] as $name=>$strategy) {
@@ -24,11 +36,21 @@ class UploaderBotService {
         die;
     }
 
+    /**
+     * Loads config
+     *
+     * @return $this -- chainable
+     */
     public function loadConfig() {
         $this->config = require("config.php");
         return $this;
     }
 
+    /**
+     * Initializes bot, parses arguments and defines strategy
+     *
+     * @return $this -- chainable
+     */
     public function init() {
 
         // 0. Initialize Rabbit
@@ -77,7 +99,11 @@ class UploaderBotService {
     }
 
 
-
+    /**
+     * Runs main execution flow
+     *
+     * @return $this
+     */
     public function run()
     {
         $initialAction = array_keys($this->strategy)[0];
@@ -86,6 +112,13 @@ class UploaderBotService {
         return $this;
     }
 
+    /**
+     * Runs method $action, and analyzes execution result. $follows for next action
+     *
+     * @param $action
+     * @param $follows
+     * @return $this  -- chainable
+     */
     public function runAction($action,$follows) {
 
         $this->log('Running action: '.$action);
@@ -109,9 +142,11 @@ class UploaderBotService {
             }
 
         }
+        return $this;
     }
 
     /**
+     * Output message to the screen, if verbose mode is enabled
      * @param $message
      */
     public function log($message)
@@ -119,25 +154,13 @@ class UploaderBotService {
         if ($this->debug) echo '['.date('Y-m-d H:i:s').'] '.($this->runningAction?'['.$this->runningAction.'] ':'').$message.PHP_EOL;
     }
 
-    /**
-     * @return boolean
-     */
-    public function isDebug()
-    {
-        return $this->debug;
-    }
 
     /**
+     * Set $strategy as main execution strategy
      * @param array $strategy
      */
     public function setStrategy($strategy)
     {
         $this->strategy = $strategy;
-    }
-
-    public function __destruct()
-    {
-        // TODO: Implement __destruct() method.
-
     }
 }

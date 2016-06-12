@@ -4,9 +4,19 @@ namespace UploaderBot;
 
 use CHH\Optparse;
 
+/**
+ * Class UploaderBot -- implements all logic for uploading pictures to aws
+ *
+ * @package UploaderBot
+ */
 class UploaderBot extends UploaderBotService {
 
 
+    /**
+     * Lists images in folder, given as second argument from commando
+     *
+     * @return array
+     */
     public function listImagesInFolder()
     {
         $folder = $this->commando[1];
@@ -35,6 +45,11 @@ class UploaderBot extends UploaderBotService {
     }
 
 
+    /**
+     * Adds images from registry to queue. Queue name is set in strategy config, or in registry
+     *
+     * @return array
+     */
     public function addImagesToQueue() {
 
         if (isset($this->strategy['queue'])) {
@@ -62,6 +77,12 @@ class UploaderBot extends UploaderBotService {
     }
 
 
+    /**
+     * Adds failed images from registry to failed queue.
+     *
+     * @todo use addImagesToQueue to process failed images
+     * @return array
+     */
     public function addFailedImagesToQueue() {
 
         if (!isset($this->registry['failed'])) $this->registry['failed'] = array();
@@ -81,6 +102,11 @@ class UploaderBot extends UploaderBotService {
         return array('ok',array());
     }
 
+    /**
+     * Lists queues and count of messages
+     *
+     * @return array
+     */
     public function listQueues()
     {
 
@@ -103,6 +129,8 @@ class UploaderBot extends UploaderBotService {
     }
 
     /**
+     * Adds images from queue to registry. Queue name is set in strategy config, or a strategy name is used
+     *
      * @return array
      */
     public function getImagesFromQueue()
@@ -136,6 +164,11 @@ class UploaderBot extends UploaderBotService {
         return array('ok',array('images'=>$images));
     }
 
+    /**
+     * Resizes images from registry.
+     * 
+     * @return array
+     */
     public function resizeImages()
     {
 
@@ -196,6 +229,11 @@ class UploaderBot extends UploaderBotService {
 
     }
 
+    /**
+     * Uploads images from registry
+     *
+     * @return array
+     */
     public function uploadImages()
     {
         $images = array();
