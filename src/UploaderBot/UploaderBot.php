@@ -21,6 +21,8 @@ class UploaderBot extends UploaderBotService {
 
         $images = array();
 
+        if (substr($folder, -1)!='/') $folder.='/';
+
         foreach (glob($folder . '*') as $filename) {
 
             if (false !== @imagecreatefromstring(file_get_contents($filename))) {
