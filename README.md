@@ -6,8 +6,8 @@ This software resizes and uploads images to AWS.
 
 Assuming that composer is accessible within your PATH:
 
-`git clone git@github.com:chrl/uploaderbot.git` 
-`cd uploaderbot; composer self-update && composer install`
+    git clone git@github.com:chrl/uploaderbot.git
+    cd uploaderbot; composer self-update && composer install
 
 RabbitMQ-server and php-amqp extension are required.
 
@@ -36,10 +36,15 @@ All access params are in `access` section of configuration file.
 You'll have to prepare folder with sample images, that will be resized and uploaded.
 
 `./bot.php --help` -- outputs help, including list of available commands, and exits.
+
 `./bot.php schedule ./images` -- schedules images from folder `./images` for resizing
+
 `./bot.php resize [-n <count>]` -- resizes queued images. If -n option is omitted, works with all images in the queue.
+
 `./bot.php upload [-n <count>]` -- uploads resized images. If -n option is omitted, works with all images in the queue.
+
 `./bot.php retry [-n <count>]` -- moves images from failed queue to resize queue, to process them again. If -n option is omitted, works with all images in the queue.
+
 `./bot.php status` -- shows number of messages in all queues.
 
 ## Debug
