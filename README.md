@@ -1,4 +1,4 @@
-# Upload Bot
+# Uploader Bot
 
 This software resizes and uploads images to AWS.
 
