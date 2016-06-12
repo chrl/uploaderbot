@@ -4,7 +4,6 @@ services:
   - rabbitmq
 php:
   - '5.5'
-  - '7.0'
 install:
   - echo | pecl install -f amqp-1.2.0
   - composer self-update
@@ -14,3 +13,6 @@ before_script:
 script:
   - php ./bot.php
   - php ./bot.php status
+  - php ./bot.php --verbose schedule ./images
+  - php ./bot.php --verbose resize
+  - php ./bot.php --verbose upload
