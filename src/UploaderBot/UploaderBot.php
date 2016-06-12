@@ -93,7 +93,7 @@ class UploaderBot extends UploaderBotService {
         echo 'Queue      Count'.PHP_EOL;
 
         foreach ($sizes as $key=>$value) {
-            echo $key.' '.$value.PHP_EOL;
+            echo str_pad($key,10,' ',STR_PAD_RIGHT).' '.$value.PHP_EOL;
         }
 
 
